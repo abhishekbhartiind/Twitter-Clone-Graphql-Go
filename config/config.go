@@ -15,7 +15,6 @@ type Config struct {
 }
 
 func New() *Config {
-
 	godotenv.Load()
 	return &Config{
 		Database: database{
