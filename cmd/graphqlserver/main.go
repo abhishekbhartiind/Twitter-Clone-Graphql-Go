@@ -1,7 +1,21 @@
 package main
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+	"log"
+	"twitter/config"
+	"twitter/postgres"
+)
 
 func main() {
-	fmt.Println("hello world ...")
+
+	ctx := context.Background()
+	conf := config.New()
+	db := postgres.New(ctx, conf)
+
+	if err := db.Migrate(); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Working ...")
 }
