@@ -33,7 +33,6 @@ type RegisterInput struct {
 func (in *RegisterInput) Sanitize() {
 	in.Email = strings.TrimSpace(in.Email)
 	in.Email = strings.ToLower(in.Email)
-
 	in.Username = strings.ToLower(in.Username)
 }
 
