@@ -13,16 +13,16 @@ var (
 )
 
 type UserRepo interface {
-	CreateUser(c context.Context, user User) (User, error)
+	Create(c context.Context, user User) (User, error)
 	GetByUsername(ctx context.Context, username string) (User, error)
 	GetByEmail(c context.Context, email string) (User, error)
 }
 
 type User struct {
-	ID       string
-	Username string
-	Email    string
-	Password string
-	CreateAt time.Time
-	UpdateAt time.Time
+	ID        string
+	Username  string
+	Email     string
+	Password  string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

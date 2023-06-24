@@ -26,11 +26,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// SERVICES
-	userRepo := postgres.NewUserRepo(db)
-
-	authService := domain.NewAuthService(userRepo)
-
 	router := chi.NewRouter()
 
 	router.Use(middleware.Logger)
@@ -38,6 +33,11 @@ func main() {
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.RedirectSlashes)
 	router.Use(middleware.Timeout(time.Second * 60))
+
+	// SERVICES
+	userRepo := postgres.NewUserRepo(db)
+
+	authService := domain.NewAuthService(userRepo)
 
 	router.Handle("/", playground.Handler("twitter clone", "/query"))
 	router.Handle("/query", handler.NewDefaultServer(

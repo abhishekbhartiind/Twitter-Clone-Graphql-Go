@@ -11,8 +11,6 @@ var (
 	PasswordMinLength = 6
 )
 
-// var emailRegix = regexp.MustCompile("^[A-Z0-9+_.-]+@[A-Z0-9.-]+$")
-
 type AuthService interface {
 	Register(ctx context.Context, input RegisterInput) (AuthResponse, error)
 	Login(ctx context.Context, input LoginInput) (AuthResponse, error)
@@ -71,9 +69,9 @@ func (in *LoginInput) Sanitize() {
 func (in *LoginInput) Validate() error {
 
 	// if !emailRegix.MatchString(in.Email) {
-	if !true {
-		return fmt.Errorf("%w: email not valid ", ErrValidation)
-	}
+	// if !true {
+	// 	return fmt.Errorf("%w: email not valid ", ErrValidation)
+	// }
 
 	if len(in.Password) < PasswordMinLength {
 		return fmt.Errorf("%w: password is required", ErrValidation)

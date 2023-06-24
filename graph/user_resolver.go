@@ -7,9 +7,10 @@ import (
 
 func mapUser(u twitter.User) *User {
 	return &User{
-		Email:    u.Email,
-		Username: u.Username,
-		CreateAt: u.CreateAt,
+		ID:        u.ID,
+		Email:     u.Email,
+		Username:  u.Username,
+		CreatedAt: u.CreatedAt,
 	}
 }
 

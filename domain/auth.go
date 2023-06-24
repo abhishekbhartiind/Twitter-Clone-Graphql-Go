@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"twitter"
 
 	"golang.org/x/crypto/bcrypt"
@@ -40,21 +41,23 @@ func (as *AuthService) Register(c context.Context, input twitter.RegisterInput) 
 		Email:    input.Email,
 	}
 
-	hashPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), 6)
 	if err != nil {
 		return twitter.AuthResponse{}, fmt.Errorf("error hashing password: %v", err)
 	}
 
 	user.Password = string(hashPassword)
 
-	user, err = as.UserRepo.CreateUser(c, user)
+	log.Println("just testing user", user)
+
+	createUser, err := as.UserRepo.Create(c, user)
 	if err != nil {
-		return twitter.AuthResponse{}, fmt.Errorf("error while creating user:%v", err)
+		return twitter.AuthResponse{}, fmt.Errorf("error while creating users:%v", err)
 	}
 
 	return twitter.AuthResponse{
 		AccessToken: "access token",
-		User:        user,
+		User:        createUser,
 	}, nil
 }
 

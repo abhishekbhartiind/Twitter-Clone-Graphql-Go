@@ -20,7 +20,7 @@ func NewUserRepo(db *DB) *UserRepo {
 	}
 }
 
-func (ur *UserRepo) CreateUser(c context.Context, user twitter.User) (twitter.User, error) {
+func (ur *UserRepo) Create(c context.Context, user twitter.User) (twitter.User, error) {
 
 	tx, err := ur.DB.Pool.Begin(c)
 	if err != nil {
@@ -41,7 +41,8 @@ func (ur *UserRepo) CreateUser(c context.Context, user twitter.User) (twitter.Us
 }
 
 func createUser(c context.Context, tx pgx.Tx, user twitter.User) (twitter.User, error) {
-	query := `INSERT INTO users (username, email,password) VALUES ($1, $2, $3) RETURNING *;`
+
+	query := `INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *;`
 
 	u := twitter.User{}
 
@@ -52,26 +53,27 @@ func createUser(c context.Context, tx pgx.Tx, user twitter.User) (twitter.User, 
 }
 
 func (ur *UserRepo) GetByUsername(ctx context.Context, username string) (twitter.User, error) {
-	query := `SELECT * FROM users WHERE id = $1 LIMIT 1`
+	query := `SELECT * FROM users WHERE username = $1 LIMIT 1;`
 	u := twitter.User{}
 
 	if err := pgxscan.Get(ctx, ur.DB.Pool, &u, query); err != nil {
 		if pgxscan.NotFound(err) {
 			return twitter.User{}, twitter.ErrNotFound
 		}
-		return twitter.User{}, fmt.Errorf("error select: %v", err)
+		return twitter.User{}, fmt.Errorf("erro while get by username: %v", err)
 	}
 	return u, nil
 }
+
 func (ur *UserRepo) GetByEmail(c context.Context, email string) (twitter.User, error) {
-	query := `SELECT * FROM users WHERE email = $1 LIMIT 1`
+	query := `SELECT * FROM users WHERE email = $1 LIMIT 1;`
 	u := twitter.User{}
 
-	if err := pgxscan.Get(c, ur.DB.Pool, &u, query); err != nil {
+	if err := pgxscan.Get(c, ur.DB.Pool, &u, query, email); err != nil {
 		if pgxscan.NotFound(err) {
 			return twitter.User{}, twitter.ErrNotFound
 		}
-		return twitter.User{}, fmt.Errorf("error select: %v", err)
+		return twitter.User{}, fmt.Errorf("error while geting by email: %v", err)
 	}
 	return u, nil
 }
