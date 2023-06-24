@@ -27,11 +27,11 @@ func (as *AuthService) Register(c context.Context, input twitter.RegisterInput) 
 		return twitter.AuthResponse{}, err
 	}
 
-	if _, err := as.UserRepo.GetByUsername(c, input.Username); !errors.Is(err, twitter.ErrNotFound) {
+	if _, err := as.UserRepo.GetByUsername(c, input.Username); errors.Is(err, twitter.ErrNotFound) {
 		return twitter.AuthResponse{}, twitter.ErrUsernameTaken
 	}
 
-	if _, err := as.UserRepo.GetByEmail(c, input.Email); !errors.Is(err, twitter.ErrNotFound) {
+	if _, err := as.UserRepo.GetByEmail(c, input.Email); errors.Is(err, twitter.ErrNotFound) {
 		return twitter.AuthResponse{}, twitter.ErrEmailTaken
 	}
 
@@ -48,7 +48,6 @@ func (as *AuthService) Register(c context.Context, input twitter.RegisterInput) 
 	user.Password = string(hashPassword)
 
 	user, err = as.UserRepo.CreateUser(c, user)
-
 	if err != nil {
 		return twitter.AuthResponse{}, fmt.Errorf("error while creating user:%v", err)
 	}

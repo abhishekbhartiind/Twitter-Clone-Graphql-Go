@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 	"twitter/config"
+	"twitter/domain"
 	"twitter/graph"
 	"twitter/postgres"
 
@@ -25,6 +26,11 @@ func main() {
 		log.Fatal(err)
 	}
 
+	// SERVICES
+	userRepo := postgres.NewUserRepo(db)
+
+	authService := domain.NewAuthService(userRepo)
+
 	router := chi.NewRouter()
 
 	router.Use(middleware.Logger)
@@ -35,7 +41,9 @@ func main() {
 
 	router.Handle("/", playground.Handler("twitter clone", "/query"))
 	router.Handle("/query", handler.NewDefaultServer(
-		graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}),
+		graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
+			AuthService: authService,
+		}}),
 	))
 
 	log.Fatal(http.ListenAndServe(":8080", router))

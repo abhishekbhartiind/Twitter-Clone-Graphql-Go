@@ -43,9 +43,9 @@ func (in *RegisterInput) Validate() error {
 	}
 
 	// if !emailRegix.MatchString(in.Email) {
-	if !true {
-		return fmt.Errorf("%w: email not valid ", ErrValidation)
-	}
+
+	// 	return fmt.Errorf("%w: email not valid ", ErrValidation)
+	// }
 
 	if len(in.Password) < PasswordMinLength {
 		return fmt.Errorf("%w: Password not enough, (%d) character as least ", ErrValidation, PasswordMinLength)
