@@ -11,12 +11,14 @@ import (
 )
 
 type AuthService struct {
-	UserRepo twitter.UserRepo
+	UserRepo         twitter.UserRepo
+	AuthTokenService twitter.AuthTokenService
 }
 
-func NewAuthService(ur twitter.UserRepo) *AuthService {
+func NewAuthService(ur twitter.UserRepo, ats twitter.AuthTokenService) *AuthService {
 	return &AuthService{
-		UserRepo: ur,
+		UserRepo:         ur,
+		AuthTokenService: ats,
 	}
 }
 
@@ -55,8 +57,14 @@ func (as *AuthService) Register(c context.Context, input twitter.RegisterInput) 
 		return twitter.AuthResponse{}, fmt.Errorf("error while creating users:%v", err)
 	}
 
+	token, err := as.AuthTokenService.CreateAccessToken(c, createUser)
+
+	if err != nil {
+		return twitter.AuthResponse{}, twitter.ErrGenTokenAccess
+	}
+
 	return twitter.AuthResponse{
-		AccessToken: "access token",
+		AccessToken: token,
 		User:        createUser,
 	}, nil
 }

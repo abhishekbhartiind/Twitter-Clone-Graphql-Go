@@ -8,6 +8,7 @@ import (
 	"twitter/config"
 	"twitter/domain"
 	"twitter/graph"
+	"twitter/jwt"
 	"twitter/postgres"
 
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -34,11 +35,14 @@ func main() {
 	router.Use(middleware.RedirectSlashes)
 	router.Use(middleware.Timeout(time.Second * 60))
 
-	// SERVICES
+	// REPO'S
 	userRepo := postgres.NewUserRepo(db)
 
-	authService := domain.NewAuthService(userRepo)
+	// SERVICE'S
+	authTokenService := jwt.NewTokenService(conf)
+	authService := domain.NewAuthService(userRepo, authTokenService)
 
+	router.Use(authMiddleware(authTokenService))
 	router.Handle("/", playground.Handler("twitter clone", "/query"))
 	router.Handle("/query", handler.NewDefaultServer(
 		graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{

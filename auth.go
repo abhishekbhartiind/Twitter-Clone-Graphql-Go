@@ -3,6 +3,7 @@ package twitter
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strings"
 )
 
@@ -14,6 +15,13 @@ var (
 type AuthToken struct {
 	ID  string
 	Sub string
+}
+
+type AuthTokenService interface {
+	CreateAccessToken(c context.Context, user User) (string, error)
+	CreateRefreshToken(c context.Context, user User, tokenID string) (string, error)
+	ParseToken(c context.Context, payload string) (AuthToken, error)
+	ParseTokenFromRequest(c context.Context, r *http.Request) (AuthToken, error)
 }
 
 type AuthService interface {
