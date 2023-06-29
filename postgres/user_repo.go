@@ -6,7 +6,6 @@ import (
 	"twitter"
 
 	"github.com/georgysavva/scany/pgxscan"
-	// "github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v4"
 )
 
@@ -56,7 +55,7 @@ func (ur *UserRepo) GetByUsername(ctx context.Context, username string) (twitter
 	query := `SELECT * FROM users WHERE username = $1 LIMIT 1;`
 	u := twitter.User{}
 
-	if err := pgxscan.Get(ctx, ur.DB.Pool, &u, query); err != nil {
+	if err := pgxscan.Get(ctx, ur.DB.Pool, &u, query, username); err != nil {
 		if pgxscan.NotFound(err) {
 			return twitter.User{}, twitter.ErrNotFound
 		}

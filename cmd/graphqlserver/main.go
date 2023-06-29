@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"time"
+	graphqlserver "twitter/cmd/graphqlserver/middleware"
 	"twitter/config"
 	"twitter/domain"
 	"twitter/graph"
@@ -42,7 +43,7 @@ func main() {
 	authTokenService := jwt.NewTokenService(conf)
 	authService := domain.NewAuthService(userRepo, authTokenService)
 
-	router.Use(authMiddleware(authTokenService))
+	router.Use(graphqlserver.AuthMiddleware(authTokenService))
 	router.Handle("/", playground.Handler("twitter clone", "/query"))
 	router.Handle("/query", handler.NewDefaultServer(
 		graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{

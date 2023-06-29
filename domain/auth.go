@@ -30,11 +30,11 @@ func (as *AuthService) Register(c context.Context, input twitter.RegisterInput) 
 		return twitter.AuthResponse{}, err
 	}
 
-	if _, err := as.UserRepo.GetByUsername(c, input.Username); errors.Is(err, twitter.ErrNotFound) {
+	if _, err := as.UserRepo.GetByUsername(c, input.Username); !errors.Is(err, twitter.ErrNotFound) {
 		return twitter.AuthResponse{}, twitter.ErrUsernameTaken
 	}
 
-	if _, err := as.UserRepo.GetByEmail(c, input.Email); errors.Is(err, twitter.ErrNotFound) {
+	if _, err := as.UserRepo.GetByEmail(c, input.Email); !errors.Is(err, twitter.ErrNotFound) {
 		return twitter.AuthResponse{}, twitter.ErrEmailTaken
 	}
 
@@ -91,8 +91,13 @@ func (as *AuthService) Login(c context.Context, input twitter.LoginInput) (twitt
 		return twitter.AuthResponse{}, twitter.ErrCredentials
 	}
 
+	accessToken, err := as.AuthTokenService.CreateAccessToken(c, user)
+	if err != nil {
+		return twitter.AuthResponse{}, twitter.ErrGenTokenAccess
+	}
+
 	return twitter.AuthResponse{
-		AccessToken: "access token",
+		AccessToken: accessToken,
 		User:        user,
 	}, nil
 }

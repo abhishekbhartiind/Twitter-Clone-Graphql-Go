@@ -1,14 +1,13 @@
-package main
+package graphqlserver
 
 import (
 	"net/http"
 	"twitter"
 )
 
-func authMiddleware(authTokenService twitter.AuthTokenService) func(handler http.Handler) http.Handler {
+func AuthMiddleware(authTokenService twitter.AuthTokenService) func(handler http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 			ctx := r.Context()
 			token, err := authTokenService.ParseTokenFromRequest(ctx, r)
 			if err != nil {
