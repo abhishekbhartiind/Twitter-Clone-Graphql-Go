@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"log"
 	"twitter"
 )
 
@@ -41,4 +42,22 @@ func (ts *TweetService) Create(c context.Context, input twitter.CreateTweetInput
 
 func (ts *TweetService) GetById(c context.Context, id string) (twitter.Tweet, error) {
 	return ts.TweetRepo.GetById(c, id)
+}
+
+func (ts *TweetService) Delete(c context.Context, id string) error {
+	currentId, err := twitter.GetUserIdFromContext(c)
+	if err != nil {
+		return twitter.ErrUnAuthenticate
+	}
+
+	tweet, err := ts.TweetRepo.GetById(c, id)
+	if err != nil {
+		log.Println("same error is here :", err, ":::", currentId)
+		return err
+	}
+	if !tweet.CanDelete(twitter.User{ID: currentId}) {
+		return twitter.ErrForbidden
+	}
+
+	return ts.TweetRepo.Delete(c, id)
 }

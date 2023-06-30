@@ -38,19 +38,21 @@ func main() {
 
 	// REPO'S
 	userRepo := postgres.NewUserRepo(db)
+	tweetRepo := postgres.NewTweetRepo(db)
 
 	// SERVICE'S
 	authTokenService := jwt.NewTokenService(conf)
 	authService := domain.NewAuthService(userRepo, authTokenService)
+	tweetService := domain.NewTweetService(tweetRepo)
 
 	router.Use(graphqlserver.AuthMiddleware(authTokenService))
 	router.Handle("/", playground.Handler("twitter clone", "/query"))
 	router.Handle("/query", handler.NewDefaultServer(
 		graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
-			AuthService: authService,
+			AuthService:  authService,
+			TweetService: tweetService,
 		}}),
 	))
 
 	log.Fatal(http.ListenAndServe(":8080", router))
-
 }

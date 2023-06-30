@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"log"
 	"twitter"
 
 	"github.com/georgysavva/scany/pgxscan"
@@ -66,18 +67,51 @@ func createTweet(c context.Context, tx pgx.Tx, tweet twitter.Tweet) (twitter.Twe
 }
 
 func (tr *TweetRepo) GetById(c context.Context, id string) (twitter.Tweet, error) {
+	log.Println("testomg ", id)
 	return getTweetById(c, tr.DB.Pool, id)
 }
 
 func getTweetById(c context.Context, q pgxscan.Querier, id string) (twitter.Tweet, error) {
 
-	query := `SELECT * FROM tweets Where id = $1 LIMIT 1;`
+	query := `SELECT * FROM tweets WHERE id = $1 LIMIT 1;`
 
 	t := twitter.Tweet{}
 
 	if err := pgxscan.Get(c, q, &t, query, id); err != nil {
-		return twitter.Tweet{}, twitter.ErrNotFound
+		if pgxscan.NotFound(err) {
+			return twitter.Tweet{}, twitter.ErrNotFound
+		}
+
+		return twitter.Tweet{}, fmt.Errorf("error get tweet: %+v", err)
 	}
 
 	return t, nil
+}
+
+func (tr *TweetRepo) Delete(c context.Context, id string) error {
+	tx, err := tr.DB.Pool.Begin(c)
+	if err != nil {
+		return fmt.Errorf("error while transaction %v", err)
+	}
+	defer tx.Rollback(c)
+
+	if err := deletTweet(c, tx, id); err != nil {
+		return err
+	}
+
+	if err := tx.Commit(c); err != nil {
+		return fmt.Errorf("error while commiting: %v", err)
+	}
+
+	return nil
+}
+
+func deletTweet(c context.Context, tx pgx.Tx, id string) error {
+
+	query := `DELETE FROM tweets Where id = $1;`
+
+	if _, err := tx.Exec(c, query, id); err != nil {
+		return fmt.Errorf("error while tweet delete %v", err)
+	}
+	return nil
 }

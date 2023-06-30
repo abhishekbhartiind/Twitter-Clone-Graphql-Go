@@ -12,6 +12,10 @@ var (
 	tweetMaxLength = 250
 )
 
+func (t Tweet) CanDelete(user User) bool {
+	return t.UserID == user.ID
+}
+
 type CreateTweetInput struct {
 	Body string
 }
@@ -45,10 +49,12 @@ type TweetService interface {
 	All(c context.Context) ([]Tweet, error)
 	Create(c context.Context, input CreateTweetInput) (Tweet, error)
 	GetById(c context.Context, id string) (Tweet, error)
+	Delete(c context.Context, id string) error
 }
 
 type TweetRepo interface {
 	All(c context.Context) ([]Tweet, error)
 	Create(c context.Context, tweet Tweet) (Tweet, error)
 	GetById(c context.Context, id string) (Tweet, error)
+	Delete(c context.Context, id string) error
 }
