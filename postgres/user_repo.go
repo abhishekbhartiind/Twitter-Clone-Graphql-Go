@@ -76,3 +76,16 @@ func (ur *UserRepo) GetByEmail(c context.Context, email string) (twitter.User, e
 	}
 	return u, nil
 }
+
+func (ur *UserRepo) GetById(c context.Context, id string) (twitter.User, error) {
+	query := `SELECT * FROM users WHERE id = $1 LIMIT 1;`
+	u := twitter.User{}
+
+	if err := pgxscan.Get(c, ur.DB.Pool, &u, query, id); err != nil {
+		if pgxscan.NotFound(err) {
+			return twitter.User{}, twitter.ErrNotFound
+		}
+		return twitter.User{}, fmt.Errorf("error while geting by email: %v", err)
+	}
+	return u, nil
+}

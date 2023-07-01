@@ -19,7 +19,6 @@ func (r *queryResolver) Me(c context.Context) (*User, error) {
 	if err != nil {
 		return nil, twitter.ErrUnAuthenticate
 	}
-
 	return mapUser(twitter.User{
 		ID: userId,
 	}), nil

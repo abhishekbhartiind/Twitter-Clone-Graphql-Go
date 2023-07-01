@@ -6,10 +6,6 @@ import (
 	"twitter"
 )
 
-func (t *tweetResolver) User(c context.Context, obj *Tweet) (*User, error) {
-	panic("implement me ")
-}
-
 func mapTweet(t twitter.Tweet) *Tweet {
 	return &Tweet{
 		ID:        t.ID,
@@ -55,4 +51,15 @@ func (m *mutationResolver) DeleteTweet(ctx context.Context, id string) (bool, er
 	}
 
 	return true, nil
+}
+
+func (t *tweetResolver) User(c context.Context, obj *Tweet) (*User, error) {
+
+	user, err := t.UserService.GetById(c, obj.UserID)
+	if err != nil {
+		return nil, buildError(c, err)
+	}
+
+	return mapUser(user), nil
+
 }

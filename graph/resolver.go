@@ -15,6 +15,7 @@ import (
 type Resolver struct {
 	AuthService  twitter.AuthService
 	TweetService twitter.TweetService
+	UserService  twitter.UserServices
 }
 
 type queryResolver struct {

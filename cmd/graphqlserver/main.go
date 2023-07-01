@@ -44,6 +44,7 @@ func main() {
 	authTokenService := jwt.NewTokenService(conf)
 	authService := domain.NewAuthService(userRepo, authTokenService)
 	tweetService := domain.NewTweetService(tweetRepo)
+	userService := domain.NewUserService(userRepo)
 
 	router.Use(graphqlserver.AuthMiddleware(authTokenService))
 	router.Handle("/", playground.Handler("twitter clone", "/query"))
@@ -51,6 +52,7 @@ func main() {
 		graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
 			AuthService:  authService,
 			TweetService: tweetService,
+			UserService:  userService,
 		}}),
 	))
 
