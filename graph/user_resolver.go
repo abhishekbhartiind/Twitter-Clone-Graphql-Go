@@ -5,6 +5,15 @@ import (
 	"twitter"
 )
 
+func mapUserOnly(u twitter.User) twitter.User {
+	return twitter.User{
+		ID:        u.ID,
+		Email:     u.Email,
+		Username:  u.Username,
+		CreatedAt: u.CreatedAt,
+	}
+}
+
 func mapUser(u twitter.User) *User {
 	return &User{
 		ID:        u.ID,

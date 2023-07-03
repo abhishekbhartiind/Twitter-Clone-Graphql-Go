@@ -46,6 +46,10 @@ func main() {
 	tweetService := domain.NewTweetService(tweetRepo)
 	userService := domain.NewUserService(userRepo)
 
+	router.Use(graph.DataLoaderMiddleware(&graph.Repos{
+		UserRepo: userRepo,
+	}))
+
 	router.Use(graphqlserver.AuthMiddleware(authTokenService))
 	router.Handle("/", playground.Handler("twitter clone", "/query"))
 	router.Handle("/query", handler.NewDefaultServer(

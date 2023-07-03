@@ -21,6 +21,7 @@ type UserRepo interface {
 	GetByUsername(ctx context.Context, username string) (User, error)
 	GetByEmail(c context.Context, email string) (User, error)
 	GetById(c context.Context, id string) (User, error)
+	GetByIds(c context.Context, ids []string) ([]User, error)
 }
 
 type User struct {
