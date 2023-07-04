@@ -53,15 +53,24 @@ func (m *mutationResolver) DeleteTweet(ctx context.Context, id string) (bool, er
 	return true, nil
 }
 
+func mapToUser(u User) *User {
+	return &User{
+		ID:        u.ID,
+		Email:     u.Email,
+		Username:  u.Username,
+		CreatedAt: u.CreatedAt,
+	}
+}
+
 func (t *tweetResolver) User(c context.Context, obj *Tweet) (*User, error) {
 
-	return DataLoaderFor(c).UserByID.Load(obj.UserID)
+	u, e := DataLoaderFor(c).UserByID.Load(obj.UserID)
+	uu := mapToUser(u)
+	return uu, e
 
 	// user, err := t.UserService.GetById(c, obj.UserID)
 	// if err != nil {
 	// 	return nil, buildError(c, err)
 	// }
-
 	// return mapUser(user), nil
-
 }

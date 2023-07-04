@@ -62,5 +62,6 @@ func DataLoaderMiddleware(repos *Repos) func(handler http.Handler) http.Handler 
 }
 
 func DataLoaderFor(c context.Context) *Loaders {
+
 	return c.Value(loadersKey).(*Loaders)
 }
