@@ -61,3 +61,34 @@ func (ts *TweetService) Delete(c context.Context, id string) error {
 
 	return ts.TweetRepo.Delete(c, id)
 }
+
+func (ts *TweetService) CreateReply(c context.Context, parentID string, input twitter.CreateTweetInput) (twitter.Tweet, error) {
+
+	currentId, err := twitter.GetUserIdFromContext(c)
+	if err != nil {
+		return twitter.Tweet{}, twitter.ErrUnAuthenticate
+	}
+
+	input.Sanitize()
+
+	if err := input.Validate(); err != nil {
+		return twitter.Tweet{}, twitter.ErrValidation
+	}
+
+	if _, err := ts.TweetRepo.GetById(c, parentID); err != nil {
+		return twitter.Tweet{}, twitter.ErrNotFound
+	}
+
+	tweet, err := ts.TweetRepo.Create(c, twitter.Tweet{
+		UserID:   currentId,
+		Body:     input.Body,
+		ParentId: &parentID,
+	})
+
+	if err != nil {
+		return twitter.Tweet{}, err
+	}
+
+	return tweet, nil
+
+}
