@@ -3,7 +3,6 @@ package graph
 import (
 	"context"
 	"errors"
-	"log"
 	"twitter"
 )
 
@@ -77,8 +76,6 @@ func (t *tweetResolver) User(c context.Context, obj *Tweet) (*User, error) {
 }
 
 func (m *mutationResolver) CreateReply(ctx context.Context, parentID string, input CreateTweetInput) (*Tweet, error) {
-
-	log.Println("testing parent id ", parentID)
 
 	tweet, err := m.TweetService.CreateReply(ctx, parentID, twitter.CreateTweetInput{
 		Body: input.Body,

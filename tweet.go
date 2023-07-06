@@ -50,6 +50,7 @@ type TweetService interface {
 	All(c context.Context) ([]Tweet, error)
 	Create(c context.Context, input CreateTweetInput) (Tweet, error)
 	CreateReply(c context.Context, parentID string, input CreateTweetInput) (Tweet, error)
+	GetAllReplyTweet(c context.Context)
 	GetById(c context.Context, id string) (Tweet, error)
 	Delete(c context.Context, id string) error
 }
