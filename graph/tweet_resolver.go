@@ -85,3 +85,14 @@ func (m *mutationResolver) CreateReply(ctx context.Context, parentID string, inp
 	}
 	return mapTweet(tweet), nil
 }
+
+func (m *mutationResolver) GetAllTweetReply(ctx context.Context, parentID string) ([]*Tweet, error) {
+
+	tweets, err := m.TweetService.GetAllReplyTweet(ctx, parentID)
+	if err != nil {
+		return nil, buildError(ctx, err)
+	}
+
+	return mapTweets(tweets), nil
+
+}

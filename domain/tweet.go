@@ -90,5 +90,8 @@ func (ts *TweetService) CreateReply(c context.Context, parentID string, input tw
 	}
 
 	return tweet, nil
+}
 
+func (ts *TweetService) GetAllReplyTweet(c context.Context, parentID string) ([]twitter.Tweet, error) {
+	return ts.TweetRepo.GetAllReplyTweet(c, parentID)
 }

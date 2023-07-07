@@ -88,6 +88,21 @@ func getTweetById(c context.Context, q pgxscan.Querier, id string) (twitter.Twee
 	return t, nil
 }
 
+func (tr *TweetRepo) GetAllReplyTweet(c context.Context, parentID string) ([]twitter.Tweet, error) {
+	return getAllReplyTweet(c, tr.DB.Pool, parentID)
+}
+
+func getAllReplyTweet(c context.Context, q pgxscan.Querier, parentID string) ([]twitter.Tweet, error) {
+	query := `SELECT * FROM tweets WHERE parent_id = $1;`
+
+	var tweets []twitter.Tweet
+	if err := pgxscan.Select(c, q, &tweets, query, parentID); err != nil {
+		return []twitter.Tweet{}, twitter.ErrNotFound
+	}
+
+	return tweets, nil
+}
+
 func (tr *TweetRepo) Delete(c context.Context, id string) error {
 	tx, err := tr.DB.Pool.Begin(c)
 	if err != nil {
