@@ -21,6 +21,8 @@ import (
 func main() {
 
 	ctx := context.Background()
+	config.LoadEnv(".env")
+
 	conf := config.New()
 	db := postgres.New(ctx, conf)
 
