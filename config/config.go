@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"regexp"
 
 	"github.com/joho/godotenv"
 )
@@ -18,6 +19,17 @@ type Config struct {
 type jwt struct {
 	Secret string
 	Issuer string
+}
+
+func LoadEnv(fileName string) {
+	re := regexp.MustCompile(`^(.*` + "twitter" + `)`)
+	cwd, _ := os.Getwd()
+	rootPath := re.Find([]byte(cwd))
+
+	err := godotenv.Load(string(rootPath) + `/` + fileName)
+	if err != nil {
+		godotenv.Load()
+	}
 }
 
 func New() *Config {
