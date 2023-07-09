@@ -4,18 +4,17 @@
 mock:
 	mockery --all --keeptree
 
-# migrate:
-# 	migrate -source file://postgres/migrations \
-# 			-database postgres://postgres:@127.0.0.1:5432/twitter?sslmode=disable up
+migrate:
+	migrate -source file://postgres/migrations \
+			-database postgres://postgres:@127.0.0.1:5432/twitter?sslmode=disable up
 
-# rollback:
-# 	migrate -source file://postgres/migrations \
-# 			-database postgres://postgres:postgres@127.0.0.1:5432/twitter?sslmode=disable down 1
+rollback:
+	migrate -source file://postgres/migrations \
+			-database postgres://postgres:postgres@127.0.0.1:5432/twitter?sslmode=disable down 1
 
-# drop:
-# 	migrate -source file://postgres/migrations \
-# 			-database postgres://postgres:postgres@127.0.0.1:5432/twitter?sslmode=disable drop
-
+drop:
+	migrate -source file://postgres/migrations \
+			-database postgres://postgres:postgres@127.0.0.1:5432/twitter?sslmode=disable drop
 
 
 
