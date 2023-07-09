@@ -26,9 +26,9 @@ func main() {
 	conf := config.New()
 	db := postgres.New(ctx, conf)
 
-	// if err := db.Migrate(); err != nil {
-	// 	log.Fatal(err)
-	// }
+	if err := db.Migrate(); err != nil {
+		log.Fatal(err)
+	}
 
 	router := chi.NewRouter()
 
