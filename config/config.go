@@ -37,11 +37,11 @@ func New() *Config {
 
 	return &Config{
 		Database: database{
-			URL: os.Getenv("DATABASE_URL"),
+			URL: os.Getenv("postgresql://postgres:dreamer@20.203.31.58:5432/twitter?sslmode=disable"),
 		},
 		JWT: jwt{
-			Secret: os.Getenv("JWT_SECRET"),
-			Issuer: os.Getenv("DOMAIN"),
+			Secret: os.Getenv("dreamer"),
+			Issuer: os.Getenv("twitter-clone"),
 		},
 	}
 }
