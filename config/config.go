@@ -40,6 +40,7 @@ func New() *Config {
 			URL: os.Getenv("postgresql://postgres:dreamer@20.203.31.58:5432/twitter?sslmode=disable"),
 		},
 		JWT: jwt{
+			// ! chanage it later
 			Secret: os.Getenv("dreamer"),
 			Issuer: os.Getenv("twitter-clone"),
 		},
